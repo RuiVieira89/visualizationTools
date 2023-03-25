@@ -4,6 +4,75 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
+from scipy import stats
+
+
+class PairGridCorr_plot:
+    def __init__(self, data, hue=None):
+        self.data = data
+        self.hue = hue
+        self.g = None
+        
+    def _get_col_name(self, col):
+        # replace underscores with spaces and 
+        # capitalize first letter of each word
+        return col.replace('_', ' ').title()
+        
+    def _annotate_corr(self, x, y, hue=None, **kwargs):
+        # Group the data by hue category
+        if hue is not None:
+            grouped = self.data.groupby(hue)
+        else:
+            grouped = [(None, self.data)]
+
+        # Annotate each subplot for each hue category
+        for i, (name, group) in enumerate(grouped):
+            #color = palette[i]
+            ax = plt.gca()
+
+            # A statistical hypothesis test is a method of 
+            # statistical inference used to decide whether 
+            # the data at hand sufficiently support a particular 
+            # hypothesis. Hypothesis testing allows us to make 
+            # probabilistic statements about population parameters.
+
+            # p-value --> probability of obtaining test results 
+            # at least as extreme as the result actually observed, 
+            # under the assumption that the null hypothesis is 
+            # correct. A very small p-value means that such an 
+            # extreme observed outcome would be very unlikely 
+            # under the null hypothesis.
+
+            # r --> measure of linear correlation between 
+            # two sets of data 
+            r, p = stats.pearsonr(group[x.name], group[y.name])
+
+            # Annotate the subplot
+            if hue is not None:
+                ax.annotate(f"{name} r={r:.2f} p={p:.2f}", 
+                            xy=(0.1, 0.9 - i/10), 
+                            xycoords=ax.transAxes, 
+                            **kwargs
+                            )
+            
+            else:
+                ax.annotate(f"r={r:.2f} p={p:.2f}", 
+                            xy=(.1, .9), 
+                            xycoords=ax.transAxes, 
+                            **kwargs
+                            )
+    
+    def plot(self):
+        g = sns.PairGrid(self.data, hue=self.hue)
+        g.map_upper(sns.scatterplot)
+        g.map_diag(sns.histplot, kde=True)
+        g.map_lower(self._annotate_corr, hue=self.hue)
+        g.map_lower(sns.kdeplot)
+        g.add_legend()
+        self.g = g
+
+        return g
+
 
 class waterfall_chart:
 
@@ -107,38 +176,14 @@ class distributions:
             data = data.values.reshape(1,-1)
 
         
-        colors = sns.color_palette("husl", n_colors=len(data))
-        for i in range(len(data)):
-            d = data[i]
-            color = colors[i]
-            # Plot the histogram
-            if onlyKDE:
-                sns.kdeplot(d, color=color)
-            else:
-                sns.histplot(d, color=color, kde=True)
+        # Plot the histogram
+        if onlyKDE:
+            sns.kdeplot(data, kde=True)
+        else:
+            sns.histplot(data)
             
         plt.show()
 
-    def grid_plot_dist(self, data=[], small_limit=15, hue='dataset'):
-        print("Running distributions.grid_plot_dist")
-
-        if len(data) < 1: 
-            data = xw.load(index=False)
-
-        try:
-            flag = len(data) > small_limit
-        except Exception:
-            flag = False 
-        
-        g = sns.PairGrid(data, hue=hue)
-
-        if flag:
-            g.map_upper(sns.histplot)
-        else:
-            g.map_upper(sns.scatterplot)
-
-        g.map_lower(sns.kdeplot, fill=True)
-        g.map_diag(sns.histplot, kde=True)
 
 # Example usage
 # data = [np.random.normal(0, 1, 100), np.random.normal(3, 2, 100), np.random.normal(3, 2, 100)]
