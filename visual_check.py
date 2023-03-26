@@ -123,25 +123,27 @@ class ProcessCapability:
             print(f"Process Performance Index (Ppk): {self.ppk:.2f}")
 
 
-#data = [98, 102, 99, 100, 101, 97, 103, 98, 102, 99]
+if __name__ == '__main__':
 
-from utils import generate_random_data
+    #data = [98, 102, 99, 100, 101, 97, 103, 98, 102, 99]
 
-data = generate_random_data(lower_lim=1, upper_lim=20, size=(15, 5)).abs()
+    from utils import generate_random_data
 
-# Load iris dataset
-import pandas as pd
-from sklearn.datasets import load_iris
+    data = generate_random_data(lower_lim=1, upper_lim=20, size=(15, 5)).abs()
 
-iris = load_iris()
-df = pd.DataFrame(iris.data, columns=iris.feature_names)
+    # Load iris dataset
+    import pandas as pd
+    from sklearn.datasets import load_iris
 
-spec_upper = 5
-spec_lower = 1
+    iris = load_iris()
+    df = pd.DataFrame(iris.data, columns=iris.feature_names)
 
-pc = ProcessCapability(df[df.columns[1]], 
-                       spec_upper, spec_lower)
+    spec_upper = 5
+    spec_lower = 1
 
-plt.show()
+    pc = ProcessCapability(df[df.columns[1]], 
+                        spec_upper, spec_lower)
 
-print('Énd')
+    plt.show()
+
+    print('Énd')
