@@ -5,6 +5,7 @@ from scipy.stats import norm
 
 
 class ProcessCapability:
+
     def __init__(self, data, spec_upper, spec_lower, run=True):
         """
         data: the dataset (numpy array or pandas DataFrame)
@@ -30,6 +31,7 @@ class ProcessCapability:
     def calculate_indices(self):
         self.mean = np.mean(self.data, axis=0)
         self.std_dev = np.std(self.data, ddof=1, axis=0)
+        # these indicators should be above 1 (at least)
         self.cp = (self.spec_upper - self.spec_lower) / (6 * self.std_dev)
         self.cpk = np.minimum((self.spec_upper - self.mean) / (3 * self.std_dev),
                        (self.mean - self.spec_lower) / (3 * self.std_dev))
