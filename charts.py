@@ -187,10 +187,6 @@ class distributions:
         plt.show()
 
 
-
-import pandas as pd
-import matplotlib.pyplot as plt
-
 def pareto_plot(dataframe, category_column, value_column):
 # Example usage:
 # Assuming df is your Pandas DataFrame with categorical and numerical columns
@@ -233,9 +229,9 @@ def pareto_plot(dataframe, category_column, value_column):
     plt.title('Pareto Diagram')
 
     # Show the plot
-    plt.show()
+    #plt.show()
 
-
+'''UTIL'''
 def count_categories(dataframe, category_column, label='Count'):
 # Example usage:
 # Assuming df is your Pandas DataFrame with a categorical column 'Category'.
@@ -257,4 +253,40 @@ def count_categories(dataframe, category_column, label='Count'):
     category_counts.columns = [category_column, label]
 
     return category_counts
+
+
+def pie_chart(dataframe, category_column, value_column):
+# Example usage:
+# Assuming df is your Pandas DataFrame with categorical data and their frequencies.
+# Replace 'Category' and 'Count' with the actual column names in your DataFrame.
+
+# Example DataFrame creation:
+# data = {'Category': ['A', 'B', 'C', 'D'],
+#         'Count': [30, 25, 20, 15]}
+# df = pd.DataFrame(data)
+
+# # Call the function to plot the pie chart
+# pie_chart(df, 'Category', 'Count')
+# plt.show()
+
+    # Extract unique categories and their corresponding counts
+    categories = dataframe[category_column]
+    counts = dataframe[value_column]
+
+    # Plot the pie chart
+    plt.figure(figsize=(8, 8))
+    plt.pie(counts, labels=categories, 
+            autopct='%1.1f%%', 
+            startangle=140, 
+            #shadow=True
+            )
+    plt.axis('equal')  # Equal aspect ratio ensures that the pie is drawn as a circle.
+
+    # Title for the plot
+    plt.title('Pie Chart')
+
+    # Show the plot
+    #plt.show()
+
+
 
