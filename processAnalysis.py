@@ -32,11 +32,18 @@ class ProcessCapability:
         self.mean = np.mean(self.data, axis=0)
         self.std_dev = np.std(self.data, ddof=1, axis=0)
         # these indicators should be above 1 (at least)
-        self.cp = (self.spec_upper - self.spec_lower) / (6 * self.std_dev)
-        self.cpk = np.minimum((self.spec_upper - self.mean) / (3 * self.std_dev),
-                       (self.mean - self.spec_lower) / (3 * self.std_dev))
-        self.ppk = np.minimum((self.spec_upper - self.mean) / (3 * np.sqrt(np.mean((self.data - self.mean) ** 2, axis=0))),
-                       (self.mean - self.spec_lower) / (3 * np.sqrt(np.mean((self.data - self.mean) ** 2, axis=0))))
+        try:
+            self.cp = (self.spec_upper - self.spec_lower) / (6 * self.std_dev)
+            self.cpk = np.minimum((self.spec_upper - self.mean) / (3 * self.std_dev),
+                        (self.mean - self.spec_lower) / (3 * self.std_dev))
+            self.ppk = np.minimum((self.spec_upper - self.mean) / (3 * np.sqrt(np.mean((self.data - self.mean) ** 2, axis=0))),
+                        (self.mean - self.spec_lower) / (3 * np.sqrt(np.mean((self.data - self.mean) ** 2, axis=0))))
+        except Exception as e:
+            # probably only one sample
+            self.cp = 0
+            self.cpk = 0
+            self.ppk = 0
+            print(e)
 
     def plot_distribution(self, show=False):
         fig, (ax1, ax2) = plt.subplots(2, 1, 
@@ -120,9 +127,9 @@ class ProcessCapability:
 
     def print_indices(self, print=False):
         if print:
-            print(f"Process Capability Index (Cp): {self.cp:.2f}")
-            print(f"Process Performance Index (Cpk): {self.cpk:.2f}")
-            print(f"Process Performance Index (Ppk): {self.ppk:.2f}")
+            print(f"Process Capability Index (Cp): {self.cp[0]:.2f}")
+            print(f"Process Performance Index (Cpk): {self.cpk[0]:.2f}")
+            print(f"Process Performance Index (Ppk): {self.ppk[0]:.2f}")
 
 
 if __name__ == '__main__':
@@ -143,7 +150,7 @@ if __name__ == '__main__':
     spec_upper = 5
     spec_lower = 1
 
-    pc = ProcessCapability(df[df.columns[1]], 
+    pc = ProcessCapability(df[df.columns[0:]].values, 
                         spec_upper, spec_lower)
 
     plt.show()
