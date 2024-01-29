@@ -154,7 +154,9 @@ class waterfall_chart:
 
 
 class distributions:
-
+# Example usage
+# data = [np.random.normal(0, 1, 100), np.random.normal(3, 2, 100), np.random.normal(3, 2, 100)]
+# dist = distributions().plot_distribution(data)
     def __init__(self, run=False):
         self.tab = "Data Visualization"
         self.name = "Plots distributions"
@@ -185,6 +187,74 @@ class distributions:
         plt.show()
 
 
-# Example usage
-# data = [np.random.normal(0, 1, 100), np.random.normal(3, 2, 100), np.random.normal(3, 2, 100)]
-# dist = distributions().plot_distribution(data)
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def pareto_plot(dataframe, category_column, value_column):
+# Example usage:
+# Assuming df is your Pandas DataFrame with categorical and numerical columns
+# where 'Category' is the categorical column and 'Count' is the numerical column.
+# Replace these column names according to your DataFrame structure.
+
+# Example DataFrame creation:
+# data = {'Category': ['A', 'B', 'C', 'D', 'E'],
+#         'Count': [30, 25, 20, 15, 10]}
+# df = pd.DataFrame(data)
+
+# Call the function to plot the Pareto diagram
+# pareto_plot(df, 'Category', 'Count')
+
+    # Sort the DataFrame by the specified value_column in descending order
+    sorted_df = dataframe.sort_values(by=value_column, ascending=False)
+    
+    # Calculate cumulative percentage
+    sorted_df['cum_percentage'] = (sorted_df[value_column].cumsum() / sorted_df[value_column].sum()) * 100
+    
+    # Plot the Pareto diagram
+    fig, ax1 = plt.subplots()
+
+    # Bar plot for values
+    ax1.bar(sorted_df[category_column], sorted_df[value_column], color='b')
+    ax1.set_xlabel(category_column)
+    ax1.set_ylabel(value_column, color='b')
+    ax1.tick_params('y', colors='b')
+
+    # Line plot for cumulative percentage
+    ax2 = ax1.twinx()
+    ax2.plot(sorted_df[category_column], sorted_df['cum_percentage'], color='r', marker='o')
+    ax2.set_ylabel('Cumulative Percentage', color='r')
+    ax2.tick_params('y', colors='r')
+
+    # Rotate x-axis labels for better readability
+    plt.xticks(rotation=45, ha='right')
+
+    # Title for the plot
+    plt.title('Pareto Diagram')
+
+    # Show the plot
+    plt.show()
+
+
+def count_categories(dataframe, category_column, label='Count'):
+# Example usage:
+# Assuming df is your Pandas DataFrame with a categorical column 'Category'.
+# Replace 'Category' with the actual column name in your DataFrame.
+
+# Example DataFrame creation:
+# data = {'Category': ['A', 'B', 'A', 'C', 'B', 'A', 'A', 'C', 'C', 'B']}
+# df = pd.DataFrame(data)
+
+# # Call the function to count categories
+# count_df = count_categories(df, 'Category', label='yup')
+
+# # Print the resulting DataFrame
+# print(count_df)
+# pareto_plot(count_df, 'Category', 'yup')
+
+    # Count occurrences of each category
+    category_counts = dataframe[category_column].value_counts().reset_index()
+    category_counts.columns = [category_column, label]
+
+    return category_counts
+
